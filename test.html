@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style type="text/css">
+        .imgSlider {
+            position: relative;
+            color: #000;
+            display: block;
+            width: 100px;
+            height: 100px;
+            background-size:cover;
+            background: 0 0 no-repeat #eaeaea;
+        }
+        .arrowCont {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            height: 100%;
+        }
+        .arrowCont .arrowLeft.active {
+            background-color: #000;
+            width: 50%;
+            height: 100%;
+            display: inline-block;
+            float: left;
+            opacity: 0;
+        }
+        .arrowCont .arrowLeft.active > em {
+            width: 100%;
+            height: 100%;
+            display: block;
+            transform: rotate(180deg);
+            background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Media_Viewer_Icon_-_Next.svg/20px-Media_Viewer_Icon_-_Next.svg.png") center right no-repeat transparent;
+        }
+        .arrowCont .arrowRight.active {
+            background-color: #000;
+            width: 50%;
+            height: 100%;
+            display: inline-block;
+            float: right;
+            opacity: 0;
+        }
+        .arrowCont .arrowRight.active > em {
+            width: 100%;
+            height: 100%;
+            display: block;
+            background: url("https://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Media_Viewer_Icon_-_Next.svg/20px-Media_Viewer_Icon_-_Next.svg.png") center right no-repeat transparent;
+        }
+    </style>
+</head>
+<body style="margin-right:70px;">
+<div class="imgSlider" data-totalImg="" data-currentImg="">
+    <div class="arrowCont">
+        <div class="arrowLeft"><em></em></div>
+        <div class="arrowRight active"><em></em></div>
+    </div>
+</div>
+
+
+<h1>
+    Image Gallery
+</h1>
+<h3>Requirements:</h3>
+<ul>
+    <li>Size of the square is 100px X 100px</li>
+    <li>The images in the gallery will be taken from Loop Commerce investors page - http://www.loopcommerce.com/about/#investors.</li>
+    <li>When the page loads the first images will be displayed.</li>
+    <li>Imagine there’s a vertical line which splits the image into two (see illustration below in the html source). When hovering the right side of the image, a next arrow will appear on top of the right side of the image (http://upload.wikimedia.org/wikipedia/commons/thumb/a/aa/Media_Viewer_Icon_-_Next.svg/20px-Media_Viewer_Icon_-_Next.svg.png)</li>
+    <li>Clicking the next arrow will move to the next image</li>
+    <li>Clicking the next arrow on the last image will move to the first image</li>
+</ul>
+<p>Please write a simple page which implements the above requirements.</p>
+<!--  Illustration
+|-------------------------------|
+|		          	 |			        |
+|		      	     |			        |
+|	          		 |		    	    |
+|		          	 |			        |
+|			 				   |		       *	|
+|	    		       |		        *	|
+|		    	       |		       *	|
+|			           |			        |
+|		    	       |			        |
+|		    	       |	            |
+|		    	       |			        |
+|-------------------------------|
+-->
+</body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script type="application/javascript">
+ $("document").ready(function(){
+
+     let arrowCont = $(".arrowCont");
+     let imgSlider = $(".imgSlider");
+     const imgArray = [
+         "https://static.loopassets.net/web/assets/images/home/investors/c/oren-zeev.jpg",
+         "https://static.loopassets.net/web/assets/images/home/investors/c/mark-carges.jpg",
+         "https://static.loopassets.net/web/assets/images/home/investors/c/don-katz.jpg"
+     ];
+
+     //function to change img source for imgSlider div
+     function changeImgSliderSrc(index) {
+         imgSlider.attr("data-currentImg", index);
+         imgSlider.css("background-image", "url("+imgArray[index]+")");
+     }
+
+     //mouseover arrow containers
+     arrowCont.on("mouseenter", ".arrowLeft", function() {
+         $(this).animate({
+             opacity: 0.25
+         }, 200, function() {
+             // Animation complete.
+         });
+     });
+     arrowCont.on("mouseleave", ".arrowLeft", function() {
+         $(this).animate({
+             opacity: 0
+         }, 200, function() {
+             // Animation complete.
+         });
+     });
+
+     arrowCont.on("mouseenter", ".arrowRight", function() {
+         $(this).animate({
+             opacity: 0.25
+         }, 200, function() {
+             // Animation complete.
+         });
+     });
+     arrowCont.on("mouseleave", ".arrowRight", function() {
+         $(this).animate({
+             opacity: 0
+         }, 200, function() {
+             // Animation complete.
+         });
+     });
+
+     let _init = function() {
+         //populate initial data attributes for imgSlider
+         imgSlider.attr("data-totalImg", imgArray.length);
+         imgSlider.attr("data-currentImg", 0);
+        //load first image
+         changeImgSliderSrc(0);
+         //click event for next image
+         $(".arrowCont .arrowLeft.active").click(function() {
+             console.log("click left");
+             //get current index
+             let currentIndex = parseInt(imgSlider.attr("data-currentImg"));
+             let newIndex;
+             console.log(imgArray.length);
+             if (currentIndex <= imgArray.length) { //0 < 3 = -- //// 2 < 3 = 0
+                 newIndex = imgArray.length - 1;
+             } else {
+                 newIndex = currentIndex - 1;
+             }
+             console.log(newIndex);
+             changeImgSliderSrc(newIndex);
+         });
+         $(".arrowCont .arrowRight.active").click(function() {
+             console.log("click right");
+             //get current index
+             let currentIndex = parseInt(imgSlider.attr("data-currentImg"));
+             let newIndex;
+             console.log(imgArray.length);
+             if (currentIndex < imgArray.length && (currentIndex+1) !== imgArray.length) { //0 < 3 = ++ //// 2 < 3 = 0
+                 newIndex = currentIndex + 1;
+                 console.log(newIndex);
+             } else {
+                 newIndex = 0;
+             }
+             //console.log(newIndex);
+             changeImgSliderSrc(newIndex);
+         });
+
+     };
+
+     _init();
+ });
+</script>
+</html>
